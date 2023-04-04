@@ -6,7 +6,7 @@
 /*   By: egervais <egervais@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 19:21:40 by egervais          #+#    #+#             */
-/*   Updated: 2023/03/30 18:11:14 by egervais         ###   ########.fr       */
+/*   Updated: 2023/04/03 19:59:12 by egervais         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,40 +34,40 @@ int julia(int max_i, double x, double y, double cx, double cy, t_fractal *jul)
 void coordinate(double x, double y, t_fractal *jul)
 {
     if(x == 0)
-        jul->fx = -1;
+        jul->fx = jul->cadreminx * jul->zoom  + jul->arrowx;
     else
-        jul->fx = (x - WIDTH / 2.0) / HEIGHT * 2;
+        jul->fx = (jul->cadreminx * jul->zoom + jul->arrowx) + x * (jul->cadremaxx * jul->zoom + jul->arrowx - (jul->cadreminx * jul->zoom  + jul->arrowx)) / (WIDTH - 1);
     if(y == 0)
-        jul->fy = 1;
+        jul->fy = jul->cadremaxy * jul->zoom  + jul->arrowy;
     else
-        jul->fy = (y - HEIGHT / 2.0) / WIDTH * -2;
+        jul->fy = jul->cadreminy * jul->zoom + jul->arrowy + y * (jul->cadremaxy * jul->zoom + jul->arrowy - (jul->cadreminy * jul->zoom + jul->arrowy)) / (HEIGHT - 1);
 }
 
-void colored(int it, mlx_image_t *img, int x, int y, t_fractal *jul)
-{
-    int p = 0, l = 0;
-    int check = jul->it / jul->color;
-    unsigned int color[] = 
-    {
-    255, //black
-    0x00007FFF, //(dark blue)
-    0x0000FFFF, //(blue)
-    0x7F00FFFF, //(purple)
-    0xFF00FFFF, //(magenta)
-    0xFF007FFF, //(pink)
-    0xFF0000FF, //(red)
-    0xFF7F00FF, //(orange)
-    0xFFFF00FF, //(yellow)
-    0xFFFFFFFF, //(white)
-    };
+//void colored(int it, mlx_image_t *img, int x, int y, t_fractal *jul)
+//{
+//    int p = 0, l = 0;
+//    int check = jul->it / jul->color;
+//    unsigned int color[] = 
+//    {
+//    255, //black
+//    0x00007FFF, //(dark blue)
+//    0x0000FFFF, //(blue)
+//    0x7F00FFFF, //(purple)
+//    0xFF00FFFF, //(magenta)
+//    0xFF007FFF, //(pink)
+//    0xFF0000FF, //(red)
+//    0xFF7F00FF, //(orange)
+//    0xFFFF00FF, //(yellow)
+//    0xFFFFFFFF, //(white)
+//    };
     
-    if(it <= check)
-        mlx_put_pixel(img, x, y, color[0]);
-    else if(it % check == 0)
-        mlx_put_pixel(img, x, y, color[it / check - 1]);
-    else
-        mlx_put_pixel(img, x, y, color[it / check]);
-}
+//    if(it <= check)
+//        mlx_put_pixel(img, x, y, color[0]);
+//    else if(it % check == 0)
+//        mlx_put_pixel(img, x, y, color[it / check - 1]);
+//    else
+//        mlx_put_pixel(img, x, y, color[it / check]);
+//}
 void fractal(t_fractal* jul, mlx_image_t *img, double ox, double oy)
 {
     int p = (4294967295 - 255) / (jul->it * 1000000);
@@ -81,9 +81,9 @@ void fractal(t_fractal* jul, mlx_image_t *img, double ox, double oy)
         {
             unsigned long int c = 255;
             coordinate(x, y, jul);
-            //if(ox > 0 && x < 1)
-            //    printf("%f\n", ox);
-            i = julia(jul->it, ((jul->fx) * jul->zoom + jul->x + ox), ((jul->fy) * jul->zoom  + jul->y + oy), jul->cx, jul->cy, jul);//check if parameters fuck zoom
+            i = julia(jul->it, ((jul->fx) + ox), ((jul->fy) + oy), jul->cx, jul->cy, jul);//ox and oy to cadre
+            //if(x == 700 && y == 700)
+            //    printf("x %f, y %f, max %f, min %f\n", jul->fx, jul->fy, jul->cadremaxx * jul->zoom, jul->cadreminx * jul->zoom);
             if(i == jul->it + 1)
                 mlx_put_pixel(img, x, y, 0x000000FF);
             else
@@ -93,14 +93,11 @@ void fractal(t_fractal* jul, mlx_image_t *img, double ox, double oy)
                 c += (p * i);
                 mlx_put_pixel(img, x, y, c);
             }
-                //colored(i, img, x, y, jul);
             x++;
         }
         y++;
     }
 }
-
-int b = 0xFFFFFFFF;
 
 mlx_image_t* menu(mlx_t* mlx, int check, mlx_image_t* bro)
 {
@@ -133,22 +130,22 @@ void hook(void* param)
 		mlx_close_window(jul->mlx);
     if (mlx_is_key_down(jul->mlx, MLX_KEY_RIGHT))
     {
-        jul->x += 0.071;
+        jul->arrowx += (0.05 * jul->zoom);
         fractal(jul, jul->img, 0, 0);
     }
     if (mlx_is_key_down(jul->mlx, MLX_KEY_LEFT))
     {
-        jul->x -= 0.071;
+        jul->arrowx -= (0.05 * jul->zoom);
         fractal(jul, jul->img, 0, 0);
     }
     if (mlx_is_key_down(jul->mlx, MLX_KEY_UP))
     {
-        jul->y += 0.071;
+        jul->arrowy -= (0.05 * jul->zoom);
         fractal(jul, jul->img, 0, 0);
     }
     if (mlx_is_key_down(jul->mlx, MLX_KEY_DOWN))
     {
-        jul->y -= 0.071;
+        jul->arrowy += (0.05 * jul->zoom);
         fractal(jul, jul->img, 0, 0);
     }
 	if (mlx_is_key_down(jul->mlx, MLX_KEY_H))
@@ -157,52 +154,48 @@ void hook(void* param)
         bro = menu(jul->mlx, 1, bro);
     if (mlx_is_key_down(jul->mlx, MLX_KEY_KP_ADD))
     {
-        jul->it += 50;
+        jul->it += 10;
         fractal(jul, jul->img, 0, 0);
     }
     if (mlx_is_key_down(jul->mlx, MLX_KEY_KP_SUBTRACT))
     {
-        if(jul->it >= 50)
+        if(jul->it >= 10)
         {
-            jul->it -= 50;
+            jul->it -= 10;
             fractal(jul, jul->img, 0, 0);
         }
     }
-    if (mlx_is_key_down(jul->mlx, MLX_KEY_O))
-    {
-        jul->zoom /= 1.3;
-        fractal(jul, jul->img, jul->offsetx, jul->offsetx);
-    }
-        if (mlx_is_key_down(jul->mlx, MLX_KEY_P))
-    {
-        jul->zoom *= 1.3;
-        fractal(jul, jul->img, jul->offsetx, jul->offsetx);
-    }
+    //if (mlx_is_key_down(jul->mlx, MLX_KEY_O))
+    //{
+    //    jul->zoom /= 0.1;
+    //    fractal(jul, jul->img, 0, 0);
+    //}
+    //    if (mlx_is_key_down(jul->mlx, MLX_KEY_P))
+    //{
+    //    jul->zoom *= 0.1;
+    //    fractal(jul, jul->img, 0, 0);
+    //}
 }
 
-//void scroll(double xdelta, double ydelta, void *param)
-//{
-//    t_fractal *jul = param;
+void scroll(double xdelta, double ydelta, void *param)
+{
+    t_fractal *jul = param;
 
-//	if (ydelta > 1)
-//    {
-//		jul->zoom *= 1.3;
-//        //jul->height *= 1.3;
-//        //jul->width *= 1.3;
-//        printf("%f ; %f\n", jul->offsetx * jul->zoom, jul->offsety * jul->zoom);
-//        fractal(jul, jul->img, jul->offsetx * jul->zoom, jul->offsety * jul->zoom);
-//        //fractal(jul, jul->img, 0, 0);
-//    }
-//	if (ydelta < -1)
-//    {
-//        jul->zoom /= 1.3;
-//        //jul->height /= 1.3;
-//        //jul->width /= 1.3;
-//        //fractal(jul, jul->img, 0, 0);
-//        printf("%f ; %f\n", jul->offsetx * jul->zoom, jul->offsety * jul->zoom);
-//        fractal(jul, jul->img, jul->offsetx * jul->zoom, jul->offsety * jul->zoom);
-//    }
-//}
+	if (ydelta > 2)
+    {
+		jul->zoom *= 1.1;
+        printf("%f, %f\n", jul->offsetx, jul->offsety);
+        //fractal(jul, jul->img, jul->offsetx, jul->offsety);
+        fractal(jul, jul->img, 0, 0);
+    }
+	if (ydelta < -2)
+    {
+        jul->zoom /= 1.1;
+        printf("%f, %f\n", jul->offsetx, jul->offsety);
+        //fractal(jul, jul->img, jul->offsetx, jul->offsety);
+        fractal(jul, jul->img, 0, 0);
+    }
+}
 
 void mouse(double x, double y, void *param)//makes it so when mouse is scrolling and holding
 {
@@ -235,35 +228,37 @@ void co(void *param)
     t_fractal *jul = param;
     
     if(jul->mousex == 0)
-        jul->offsetx = -1;
+        jul->offsetx = jul->cadreminx * jul->zoom  + jul->arrowx;
     else
-        jul->offsetx = (jul->mousex  - WIDTH / 2.0) / HEIGHT * (2);
+        jul->offsetx = (jul->cadreminx * jul->zoom + jul->arrowx) + jul->mousex * (jul->cadremaxx * jul->zoom + jul->arrowx - (jul->cadreminx * jul->zoom  + jul->arrowx)) / (WIDTH - 1);
     if(jul->mousey == 0)
-        jul->offsety = 1;
+        jul->offsety = jul->cadreminy * jul->zoom  + jul->arrowx;
     else
-        jul->offsety = (jul->mousey - HEIGHT / 2.0) / WIDTH * (-2);
+        jul->offsety = jul->fy = jul->cadreminy * jul->zoom + jul->arrowy + jul->mousey * (jul->cadremaxy * jul->zoom + jul->arrowy - (jul->cadreminy * jul->zoom + jul->arrowy)) / (HEIGHT - 1);
 }
 
 int32_t	main(void)
 {
 	static t_fractal *jul;
     jul = malloc(sizeof(t_fractal));
-    jul->x = 0;
-    jul->y = 0;
+    jul->cadreminx = -1;
+    jul->cadremaxx = 1;
+    jul->cadreminy = -1;
+    jul->cadremaxy = 1;
+    jul->arrowx = 0;
+    jul->arrowy = 0;
     jul->it = 30;  //specific of fractal.
     jul->zoom = 1;
     jul->color = 10;
     jul->cx =-0.79;
     jul->cy =0.15;
-    jul->height = HEIGHT;
-    jul->width = WIDTH;
 	if (!(jul->mlx = mlx_init(1400, 1400, "MLX42", true)))
 		return(EXIT_FAILURE);
 	jul->img = mlx_new_image(jul->mlx, WIDTH, HEIGHT);
     fractal(jul, jul->img, 0, 0);
     mlx_image_to_window(jul->mlx, jul->img, 0, 0);
 	mlx_loop_hook(jul->mlx, &hook, jul);
-    //mlx_scroll_hook(jul->mlx, &scroll, jul);
+    mlx_scroll_hook(jul->mlx, &scroll, jul);
     mlx_cursor_hook(jul->mlx, &mouse, jul);
     mlx_loop_hook(jul->mlx, &co, jul);
 	mlx_loop(jul->mlx);

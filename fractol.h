@@ -6,7 +6,7 @@
 /*   By: egervais <egervais@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 19:18:13 by egervais          #+#    #+#             */
-/*   Updated: 2023/03/30 17:40:12 by egervais         ###   ########.fr       */
+/*   Updated: 2023/04/03 19:53:57 by egervais         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,13 @@ typedef struct s_fractal {
 	char		*name;
 	mlx_image_t	*img;
 	mlx_t		*mlx;
+	double		cadreminx;
+	double		cadremaxx;
+	double		cadreminy;
+	double		cadremaxy;
 	double		fx;
 	double		fy;
 	double		zoom;
-	double		x;
-	double		y;
 	int			it;
 	int			color;
 	int		mousex;
@@ -49,8 +51,10 @@ typedef struct s_fractal {
 	int			pos;
 	double		zx;
 	double		zy;
-	double		width;
-	double		height;
+	double		ox;
+	double		oy;
+	double		arrowy;
+	double		arrowx;
 	int check;
 }				t_fractal;
 
