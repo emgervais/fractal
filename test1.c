@@ -6,31 +6,12 @@
 /*   By: egervais <egervais@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 19:21:40 by egervais          #+#    #+#             */
-/*   Updated: 2023/04/03 19:59:12 by egervais         ###   ########.fr       */
+/*   Updated: 2023/04/05 17:20:46 by egervais         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
 
-int julia(int max_i, double x, double y, double cx, double cy, t_fractal *jul)
-{
-    int i = 0;
-    double t = x;
-    while(i <= max_i)
-    {
-        t=x;
-        x=(x * x) - (y * y) + cx;
-        y=(2*t*y) + cy;
-        if((x * x)+(y * y) > 4)
-            break;
-        i++;
-    }
-    jul->zx = x;
-    jul->zy = y;
-    return(i);
-}
-
-//modification cadre
 void coordinate(double x, double y, t_fractal *jul)
 {
     if(x == 0)
@@ -43,55 +24,69 @@ void coordinate(double x, double y, t_fractal *jul)
         jul->fy = jul->cadreminy * jul->zoom + jul->arrowy + y * (jul->cadremaxy * jul->zoom + jul->arrowy - (jul->cadreminy * jul->zoom + jul->arrowy)) / (HEIGHT - 1);
 }
 
-//void colored(int it, mlx_image_t *img, int x, int y, t_fractal *jul)
+int get_rgba(int r, int g, int b, int a)
+{
+    return (r << 24 | g << 16 | b << 8 | a);
+}
+
+//void color(t_fractal *jul)
 //{
-//    int p = 0, l = 0;
-//    int check = jul->it / jul->color;
-//    unsigned int color[] = 
-//    {
-//    255, //black
-//    0x00007FFF, //(dark blue)
-//    0x0000FFFF, //(blue)
-//    0x7F00FFFF, //(purple)
-//    0xFF00FFFF, //(magenta)
-//    0xFF007FFF, //(pink)
-//    0xFF0000FF, //(red)
-//    0xFF7F00FF, //(orange)
-//    0xFFFF00FF, //(yellow)
-//    0xFFFFFFFF, //(white)
-//    };
+//    int num_colors = 100;
+//    int r;
+//    int g;
+//    int b;
+//    int i = 0;
     
-//    if(it <= check)
-//        mlx_put_pixel(img, x, y, color[0]);
-//    else if(it % check == 0)
-//        mlx_put_pixel(img, x, y, color[it / check - 1]);
-//    else
-//        mlx_put_pixel(img, x, y, color[it / check]);
+//    while(i < num_colors) 
+//    {
+//        r = i * 2;
+//        g = (i * 4) % 256;
+//        b = (i * 8) % 256;
+//        jul->color[i] = get_rgba(r, g, b, 255);
+//        i++;
+//    }
 //}
+
+int color(int i, int max_i)
+{
+    int r, g, b, a;
+    double t = (double)i / (double)max_i;
+    
+    r = (int)(9*(1-t)*t*t*t*255);
+    g = (int)(15*(1-t)*(1-t)*t*t*255);
+    b = (int)(8.5*(1-t)*(1-t)*(1-t)*t*255);
+    a = 255;
+    
+    return (get_rgba(r, g, b, a));
+}
+
 void fractal(t_fractal* jul, mlx_image_t *img, double ox, double oy)
 {
-    int p = (4294967295 - 255) / (jul->it * 1000000);
+    double a = (double)255 / ((jul->it));
     double x = 0;
     double y = 0;
     double i;
+    int it;
+    int l;
     while(y <= HEIGHT)
     {
         x = 0;
         while(x <= WIDTH)
         {
-            unsigned long int c = 255;
             coordinate(x, y, jul);
-            i = julia(jul->it, ((jul->fx) + ox), ((jul->fy) + oy), jul->cx, jul->cy, jul);//ox and oy to cadre
-            //if(x == 700 && y == 700)
-            //    printf("x %f, y %f, max %f, min %f\n", jul->fx, jul->fy, jul->cadremaxx * jul->zoom, jul->cadreminx * jul->zoom);
-            if(i == jul->it + 1)
+            it = julia(jul->it, ((jul->fx) + ox), ((jul->fy) + oy), jul->cx, jul->cy, jul);//ox and oy to cadre
+            if(it == jul->it)
                 mlx_put_pixel(img, x, y, 0x000000FF);
+            else if(it == jul->it - 1)
+                mlx_put_pixel(img, x, y, 0xFFFFFFFF);
             else
             {
-                i = i + 1 - log (log  (sqrt (jul->zx*jul->zx+jul->zy*jul->zy))) / log(2);
-                i *= 1000000;
-                c += (p * i);
-                mlx_put_pixel(img, x, y, c);
+                i = it + 1 - log (log  (sqrt (jul->zx*jul->zx+jul->zy*jul->zy))) / log(2);
+                //l = it * a;
+                //printf("%f = %f\n", i, l);
+                //mlx_put_pixel(img, x, y, jul->color[(it % 100)]);
+                //mlx_put_pixel(img, x, y, get_rgba(0, 0, l, 255));
+                mlx_put_pixel(img, x, y, color(i, jul->it));
             }
             x++;
         }
@@ -165,16 +160,36 @@ void hook(void* param)
             fractal(jul, jul->img, 0, 0);
         }
     }
-    //if (mlx_is_key_down(jul->mlx, MLX_KEY_O))
-    //{
-    //    jul->zoom /= 0.1;
-    //    fractal(jul, jul->img, 0, 0);
-    //}
-    //    if (mlx_is_key_down(jul->mlx, MLX_KEY_P))
-    //{
-    //    jul->zoom *= 0.1;
-    //    fractal(jul, jul->img, 0, 0);
-    //}
+    if (mlx_is_key_down(jul->mlx, MLX_KEY_O))
+    {
+        jul->zoom /= 1.1;
+        //jul->arrowx += jul->offsetx;
+        //jul->arrowy += jul->offsety;
+        //fractal(jul, jul->img, jul->offsetx, jul->offsety);
+        //double xdist = (jul->cadremaxx - jul->cadreminx) / (2.0 * jul->zoom);
+        //double ydist = (jul->cadremaxy - jul->cadreminy) / (2.0 * jul->zoom);
+        //jul->cadreminx = jul->offsetx - xdist;
+        //jul->cadremaxx = jul->offsetx + xdist;
+        //jul->cadreminy = jul->offsety - ydist;
+        //jul->cadremaxy = jul->offsety + ydist;
+        fractal(jul, jul->img, 0, 0);
+    }
+    if (mlx_is_key_down(jul->mlx, MLX_KEY_P))
+    {
+        jul->zoom *= 1.1;
+        //jul->arrowx += jul->offsetx;
+        //jul->arrowy += jul->offsety;
+        //fractal(jul, jul->img, jul->offsetx, jul->offsety);
+        //double xdist = (jul->cadremaxx - jul->cadreminx) / (2.0 * jul->zoom);
+        //double ydist = (jul->cadremaxy - jul->cadreminy) / (2.0 * jul->zoom);
+        //jul->zoomx = jul->offsetx + xdist;
+        //jul->zoomy = jul->offsety + ydist;
+        fractal(jul, jul->img, 0, 0);
+    }
+    if (mlx_is_key_down(jul->mlx, MLX_KEY_I))
+    {
+        printf("%f : %f : %f : %f\n", jul->cadreminx * jul->zoom + jul->arrowx, jul->cadremaxx * jul->zoom + jul->arrowx, jul->cadreminy * jul->zoom + jul->arrowy, jul->cadremaxy * jul->zoom + jul->arrowy);
+    }
 }
 
 void scroll(double xdelta, double ydelta, void *param)
@@ -184,20 +199,24 @@ void scroll(double xdelta, double ydelta, void *param)
 	if (ydelta > 2)
     {
 		jul->zoom *= 1.1;
-        printf("%f, %f\n", jul->offsetx, jul->offsety);
+        //jul->arrowx += jul->offsetx / 2;
+        //jul->arrowy += jul->offsety / 2;
+        //printf("%f, %f\n", jul->offsetx, jul->offsety);
         //fractal(jul, jul->img, jul->offsetx, jul->offsety);
         fractal(jul, jul->img, 0, 0);
     }
 	if (ydelta < -2)
     {
         jul->zoom /= 1.1;
-        printf("%f, %f\n", jul->offsetx, jul->offsety);
+        //jul->arrowx += jul->offsetx / 2;
+        //jul->arrowy += jul->offsety / 2;
+        //printf("%f, %f\n", jul->offsetx, jul->offsety);
         //fractal(jul, jul->img, jul->offsetx, jul->offsety);
         fractal(jul, jul->img, 0, 0);
     }
 }
 
-void mouse(double x, double y, void *param)//makes it so when mouse is scrolling and holding
+void mouse(double x, double y, void *param)
 {
     t_fractal *jul = param;
 
@@ -228,30 +247,33 @@ void co(void *param)
     t_fractal *jul = param;
     
     if(jul->mousex == 0)
-        jul->offsetx = jul->cadreminx * jul->zoom  + jul->arrowx;
+        jul->offsetx = jul->cadreminx * jul->zoom + jul->arrowx;
     else
         jul->offsetx = (jul->cadreminx * jul->zoom + jul->arrowx) + jul->mousex * (jul->cadremaxx * jul->zoom + jul->arrowx - (jul->cadreminx * jul->zoom  + jul->arrowx)) / (WIDTH - 1);
     if(jul->mousey == 0)
         jul->offsety = jul->cadreminy * jul->zoom  + jul->arrowx;
     else
-        jul->offsety = jul->fy = jul->cadreminy * jul->zoom + jul->arrowy + jul->mousey * (jul->cadremaxy * jul->zoom + jul->arrowy - (jul->cadreminy * jul->zoom + jul->arrowy)) / (HEIGHT - 1);
+        jul->offsety = jul->cadreminy * jul->zoom + jul->arrowy + jul->mousey * (jul->cadremaxy * jul->zoom + jul->arrowy - (jul->cadreminy * jul->zoom + jul->arrowy)) / (HEIGHT - 1);
+    //printf("%f : %f\n", jul->offsetx, jul->offsety);
 }
 
-int32_t	main(void)
+int32_t	main(int argc, char **argv)
 {
 	static t_fractal *jul;
     jul = malloc(sizeof(t_fractal));
-    jul->cadreminx = -1;
-    jul->cadremaxx = 1;
-    jul->cadreminy = -1;
-    jul->cadremaxy = 1;
+    jul->color = malloc(sizeof(int) * 101);
+    
+    jul->cadreminx = -2;
+    jul->cadremaxx = 2;
+    jul->cadreminy = -2;
+    jul->cadremaxy = 2;
     jul->arrowx = 0;
     jul->arrowy = 0;
-    jul->it = 30;  //specific of fractal.
+    jul->it = 31;
     jul->zoom = 1;
-    jul->color = 10;
     jul->cx =-0.79;
     jul->cy =0.15;
+    //color(jul);
 	if (!(jul->mlx = mlx_init(1400, 1400, "MLX42", true)))
 		return(EXIT_FAILURE);
 	jul->img = mlx_new_image(jul->mlx, WIDTH, HEIGHT);

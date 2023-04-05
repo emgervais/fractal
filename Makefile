@@ -6,13 +6,13 @@
 #    By: egervais <egervais@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/03 19:11:19 by egervais          #+#    #+#              #
-#    Updated: 2023/03/28 13:28:16 by egervais         ###   ########.fr        #
+#    Updated: 2023/04/04 14:06:53 by egervais         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	:= fractol
 CFLAGS	:= -Wextra -Wall -Wunreachable-code -Wno-unused-parameter -Wno-unused-result -O3 -fsanitize=address -g
-SRCS	:= test1.c
+SRCS	:= test1.c fractals.c
 OBJS	:= ${SRCS:.c=.o}
 LIBMLX	:= ../../../MLX42/
 LIBS	:= $(LIBMLX)build/libmlx42.a -Iinclude -L "/Users/egervais/.brew/opt/glfw/lib/" -lglfw -framework Cocoa -framework OpenGL -framework IOKit

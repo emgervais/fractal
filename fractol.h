@@ -6,7 +6,7 @@
 /*   By: egervais <egervais@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 19:18:13 by egervais          #+#    #+#             */
-/*   Updated: 2023/04/03 19:53:57 by egervais         ###   ########.fr       */
+/*   Updated: 2023/04/05 16:12:01 by egervais         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ typedef struct s_fractal {
 	double		fy;
 	double		zoom;
 	int			it;
-	int			color;
+	int			*color;
 	int		mousex;
 	int		mousey;
 	double		offsetx;
@@ -55,11 +55,19 @@ typedef struct s_fractal {
 	double		oy;
 	double		arrowy;
 	double		arrowx;
-	int check;
+	double		zoomx;
+	double		zoomy;
+	int 		check;
 }				t_fractal;
 
 
 void fractal(t_fractal* jul, mlx_image_t *img, double ox, double oy);
-//void fractal(t_fractal* jul);
+int julia(int max_i, double x, double y, double cx, double cy, t_fractal *jul);
+void coordinate(double x, double y, t_fractal *jul);
+mlx_image_t* menu(mlx_t* mlx, int check, mlx_image_t* bro);
+void hook(void* param);
+void scroll(double xdelta, double ydelta, void *param);
+void mouse(double x, double y, void *param);
+void co(void *param);
 
 #endif
