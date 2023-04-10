@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   fractol.h                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: egervais <egervais@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/15 19:18:13 by egervais          #+#    #+#             */
-/*   Updated: 2023/04/05 16:12:01 by egervais         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef FRACTOL_H
 # define FRACTOL_H
 
@@ -19,8 +7,10 @@
 #include <math.h>
 #include "MLX42.h"
 
-#define HEIGHT 1400
-#define WIDTH 1400
+#define HEIGHT 800
+#define WIDTH 800
+
+enum	e_fractal{MANDELBROT, JULIA, BURNINGSHIP};
 
 typedef struct s_complex {
     
@@ -30,7 +20,7 @@ typedef struct s_complex {
 }               t_complex;
 
 typedef struct s_fractal {
-	char		*name;
+	enum e_fractal	name;
 	mlx_image_t	*img;
 	mlx_t		*mlx;
 	double		cadreminx;
@@ -41,7 +31,7 @@ typedef struct s_fractal {
 	double		fy;
 	double		zoom;
 	int			it;
-	int			*color;
+	int			color;
 	int		mousex;
 	int		mousey;
 	double		offsetx;
@@ -51,23 +41,20 @@ typedef struct s_fractal {
 	int			pos;
 	double		zx;
 	double		zy;
+	double		zz;
 	double		ox;
 	double		oy;
 	double		arrowy;
 	double		arrowx;
-	double		zoomx;
-	double		zoomy;
-	int 		check;
+	double		l;
+	int check;
 }				t_fractal;
 
 
-void fractal(t_fractal* jul, mlx_image_t *img, double ox, double oy);
+void fractal(t_fractal* jul);
+int burningship(int max_i, double x, double y, t_fractal *jul);
 int julia(int max_i, double x, double y, double cx, double cy, t_fractal *jul);
-void coordinate(double x, double y, t_fractal *jul);
-mlx_image_t* menu(mlx_t* mlx, int check, mlx_image_t* bro);
-void hook(void* param);
-void scroll(double xdelta, double ydelta, void *param);
-void mouse(double x, double y, void *param);
-void co(void *param);
+int mandelbrot(t_fractal *jul);
+//void fractal(t_fractal* jul);
 
 #endif
