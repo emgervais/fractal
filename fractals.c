@@ -6,11 +6,12 @@
 /*   By: egervais <egervais@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/10 19:50:47 by egervais          #+#    #+#             */
-/*   Updated: 2023/04/10 21:27:01 by egervais         ###   ########.fr       */
+/*   Updated: 2023/04/13 17:21:31 by egervais         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
+#include <stdio.h>
 
 int	ft_strcmp(const char *s1, const char *s2)
 {
@@ -37,9 +38,9 @@ static void	coordinate(double x, double y, t_fractal *jul)
 	if (y == 0)
 		jul->f.y = jul->cadremaxy * jul->zoom + jul->arrow.y;
 	else
-		jul->f.y = jul->cadreminy * jul->zoom + jul->arrow.y + y * (jul->cadremaxy
-				* jul->zoom + jul->arrow.y - (jul->cadreminy * jul->zoom
-					+ jul->arrow.y)) / (HEIGHT - 1);
+		jul->f.y = jul->cadreminy * jul->zoom + jul->arrow.y + y
+			* (jul->cadremaxy * jul->zoom + jul->arrow.y - (jul->cadreminy
+					* jul->zoom + jul->arrow.y)) / (HEIGHT - 1);
 }
 
 static void	draw_fractal(int x, int y, t_fractal *jul)
@@ -59,19 +60,20 @@ static void	draw_fractal(int x, int y, t_fractal *jul)
 	else if (it == jul->it - 1)
 		mlx_put_pixel(jul->img, x, y, 0xFFFFFFFF);
 	else
-		//i = it + 1 - log (log  (sqrt (jul->zx*jul->zx+jul->zy*jul->zy))/ log(2);)
 		mlx_put_pixel(jul->img, x, y, color(it, jul));
 }
 
 void	fractal(t_fractal *jul)
 {
-	int x = 0;
-	int y = 0;
-	//double i;
-	while (y <= HEIGHT)
+	int	x;
+	int	y;
+
+	x = 0;
+	y = 1;
+	while (y < HEIGHT)
 	{
 		x = 0;
-		while (x <= WIDTH)
+		while (x < WIDTH)
 		{
 			draw_fractal(x, y, jul);
 			x++;

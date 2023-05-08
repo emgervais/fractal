@@ -6,11 +6,38 @@
 /*   By: egervais <egervais@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/10 19:50:05 by egervais          #+#    #+#             */
-/*   Updated: 2023/04/10 20:26:41 by egervais         ###   ########.fr       */
+/*   Updated: 2023/04/12 17:55:18 by egervais         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
+
+int	ft_strlen(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+		i++;
+	return (i);
+}
+
+void	xhook(void *param)
+{
+	t_fractal	*jul;
+
+	jul = param;
+	mlx_close_window(jul->mlx);
+}
+
+void	ft_putstr(char *str)
+{
+	while (*str)
+	{
+		write(1, &*str, 1);
+		str++;
+	}
+}
 
 int	main(int argc, char **argv)
 {
@@ -19,14 +46,14 @@ int	main(int argc, char **argv)
 
 	if (argc < 2)
 	{
-		printf("Please enter a valid fractal : Julia,\
+		ft_putstr("Please enter a valid fractal : Julia,\
  Mandelbrot, Burningship.\n");
 		return (ERROR);
 	}
-	jul = malloc(sizeof(t_fractal));
+	jul = malloc(sizeof(*jul));
 	if (!jul)
 	{
-		printf("failed to allocate variable\n");
+		ft_putstr("failed to allocate variable\n");
 		return (ERROR);
 	}
 	paraminit(jul);
@@ -37,5 +64,6 @@ int	main(int argc, char **argv)
 	mlx_loop(jul->mlx);
 	mlx_terminate(jul->mlx);
 	free(jul);
+	ft_putstr("closed with sucess\n");
 	return (EXIT_SUCCESS);
 }

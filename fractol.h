@@ -6,7 +6,7 @@
 /*   By: egervais <egervais@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 19:18:13 by egervais          #+#    #+#             */
-/*   Updated: 2023/04/10 21:36:47 by egervais         ###   ########.fr       */
+/*   Updated: 2023/04/12 17:45:46 by egervais         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,8 @@
 
 # include "./MLX42/include/MLX42/MLX42.h"
 # include <math.h>
-# include <memory.h>
-# include <stdio.h>
 # include <stdlib.h>
+# include <unistd.h>
 
 # define HEIGHT 1400
 # define WIDTH 1400
@@ -38,10 +37,10 @@ typedef struct s_complex
 
 typedef struct s_color
 {
-	int 	r;
-	int 	g;
-	int 	b;
-	int 	a;
+	int	r;
+	int	g;
+	int	b;
+	int	a;
 }			t_color;
 
 typedef struct s_fractal
@@ -81,7 +80,9 @@ int					init_fractal(t_fractal *jul, char **name, int argc);
 int					init_mlx(t_fractal *jul);
 int					create_fractal(t_fractal *jul, int argc, char **argv);
 int					ft_strcmp(const char *s1, const char *s2);
-void				fractal(t_fractal *jul);
 int					color(int i, t_fractal *jul);
+void				xhook(void *param);
+void				ft_putstr(char *str);
+int					ft_strlen(char *str);
 
 #endif

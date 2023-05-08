@@ -6,7 +6,7 @@
 /*   By: egervais <egervais@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/10 19:42:02 by egervais          #+#    #+#             */
-/*   Updated: 2023/04/10 21:27:22 by egervais         ###   ########.fr       */
+/*   Updated: 2023/04/12 17:13:16 by egervais         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,9 +105,9 @@ static void	scrollhook(double xdelta, double ydelta, void *param)
 
 void	loop(t_fractal *jul)
 {
+	mlx_close_hook(jul->mlx, &xhook, jul);
 	mlx_loop_hook(jul->mlx, &zoomhook, jul);
 	mlx_scroll_hook(jul->mlx, &scrollhook, jul);
 	mlx_loop_hook(jul->mlx, &directionshook, jul);
 	mlx_loop_hook(jul->mlx, &ithook, jul);
 }
-//mlx_cursor_hook(jul->mlx, &mouse, jul);

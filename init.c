@@ -6,7 +6,7 @@
 /*   By: egervais <egervais@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/10 19:46:26 by egervais          #+#    #+#             */
-/*   Updated: 2023/04/10 21:28:02 by egervais         ###   ########.fr       */
+/*   Updated: 2023/04/18 13:37:47 by egervais         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	paraminit(t_fractal *jul)
 	jul->cadremaxy = 2;
 	jul->arrow.x = 0;
 	jul->arrow.y = 0;
-	jul->it = 31;
+	jul->it = 151;
 	jul->zoom = 1;
 	jul->c.x = -0.506667;
 	jul->c.y = 0.520000;
@@ -38,8 +38,8 @@ void	initjul(t_fractal *jul, char **name, int argc)
 	}
 	else if (name[2][0] == '2')
 	{
-		jul->c.x = 0.386667;
-		jul->c.y = 0.103333;
+		jul->c.x = -0.8696;
+		jul->c.y = 0.26;
 	}
 	else if (name[2][0] == '3')
 	{
@@ -55,6 +55,9 @@ void	initjul(t_fractal *jul, char **name, int argc)
 
 int	init_fractal(t_fractal *jul, char **name, int argc)
 {
+	int	i;
+
+	i = 0;
 	if (!ft_strcmp(name[1], "Mandelbrot"))
 		jul->name = MANDELBROT;
 	else if (!ft_strcmp(name[1], "Burningship"))
@@ -62,7 +65,10 @@ int	init_fractal(t_fractal *jul, char **name, int argc)
 	else if (!ft_strcmp(name[1], "Julia"))
 	{
 		jul->name = JULIA;
-		initjul(jul, name, argc);
+		if (name[2])
+			i = ft_strlen(name[2]);
+		if (i < 2)
+			initjul(jul, name, argc);
 	}
 	else
 		return (ERROR);
@@ -75,14 +81,15 @@ int	init_mlx(t_fractal *jul)
 	if (!jul->mlx)
 	{
 		free(jul);
-		printf("Failed to initiate instance\n");
+		ft_putstr("Failed to initiate instance\n");
 		return (ERROR);
 	}
+	mlx_set_window_title(jul->mlx, "Fractol");
 	jul->img = mlx_new_image(jul->mlx, WIDTH, HEIGHT);
 	if (!jul->img)
 	{
 		free(jul);
-		printf("Failed to create image\n");
+		ft_putstr("Failed to create image\n");
 		return (ERROR);
 	}
 	return (1);
@@ -96,7 +103,7 @@ int	create_fractal(t_fractal *jul, int argc, char **argv)
 	if (check == ERROR)
 	{
 		free(jul);
-		printf("Please enter a valid fractal : Julia, \
+		ft_putstr("Please enter a valid fractal : Julia, \
 Mandelbrot, Burningship.\n");
 		return (ERROR);
 	}
@@ -108,7 +115,7 @@ Mandelbrot, Burningship.\n");
 	if (check == ERROR)
 	{
 		free(jul);
-		printf("Failed to display image\n");
+		ft_putstr("Failed to display image\n");
 		return (ERROR);
 	}
 	return (1);
