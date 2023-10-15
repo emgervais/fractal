@@ -20,22 +20,22 @@ static void	directionshook(void *param)
 	if (mlx_is_key_down(jul->mlx, MLX_KEY_RIGHT))
 	{
 		jul->arrow.x += (0.05 * jul->zoom);
-		fractal(jul);
+		render(jul);
 	}
 	if (mlx_is_key_down(jul->mlx, MLX_KEY_LEFT))
 	{
 		jul->arrow.x -= (0.05 * jul->zoom);
-		fractal(jul);
+		render(jul);
 	}
 	if (mlx_is_key_down(jul->mlx, MLX_KEY_UP))
 	{
 		jul->arrow.y -= (0.05 * jul->zoom);
-		fractal(jul);
+		render(jul);
 	}
 	if (mlx_is_key_down(jul->mlx, MLX_KEY_DOWN))
 	{
 		jul->arrow.y += (0.05 * jul->zoom);
-		fractal(jul);
+		render(jul);
 	}
 }
 
@@ -47,14 +47,14 @@ static void	ithook(void *param)
 	if (mlx_is_key_down(jul->mlx, MLX_KEY_KP_ADD))
 	{
 		jul->it += 10;
-		fractal(jul);
+		render(jul);
 	}
 	if (mlx_is_key_down(jul->mlx, MLX_KEY_KP_SUBTRACT))
 	{
 		if (jul->it >= 10)
 		{
 			jul->it -= 10;
-			fractal(jul);
+			render(jul);
 		}
 	}
 	if (mlx_is_key_down(jul->mlx, MLX_KEY_ESCAPE))
@@ -71,17 +71,17 @@ static void	zoomhook(void *param)
 		jul->color++;
 		if (jul->color > 2)
 			jul->color = 0;
-		fractal(jul);
+		render(jul);
 	}
 	if (mlx_is_key_down(jul->mlx, MLX_KEY_O))
 	{
 		jul->zoom /= 1.1;
-		fractal(jul);
+		render(jul);
 	}
 	if (mlx_is_key_down(jul->mlx, MLX_KEY_P))
 	{
 		jul->zoom *= 1.1;
-		fractal(jul);
+		render(jul);
 	}
 }
 
@@ -94,12 +94,12 @@ static void	scrollhook(double xdelta, double ydelta, void *param)
 	if (ydelta > 2)
 	{
 		jul->zoom *= 1.1;
-		fractal(jul);
+		render(jul);
 	}
 	if (ydelta < -2)
 	{
 		jul->zoom /= 1.1;
-		fractal(jul);
+		render(jul);
 	}
 }
 

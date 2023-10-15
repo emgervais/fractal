@@ -27,18 +27,18 @@ int	ft_strcmp(const char *s1, const char *s2)
 	return ((unsigned char)(s1[i]) - (unsigned char)(s2[i]));
 }
 
-static void	coordinate(double x, double y, t_fractal *jul)
+static void	coordinate(double x, double y, t_fractal *jul, double *fx, double *fy)
 {
 	if (x == 0)
-		jul->f.x = jul->cadreminx * jul->zoom + jul->arrow.x;
+		*fx = jul->cadreminx * jul->zoom + jul->arrow.x;
 	else
-		jul->f.x = (jul->cadreminx * jul->zoom + jul->arrow.x) + x
+		*fx = (jul->cadreminx * jul->zoom + jul->arrow.x) + x
 			* (jul->cadremaxx * jul->zoom + jul->arrow.x - (jul->cadreminx
 					* jul->zoom + jul->arrow.x)) / (WIDTH - 1);
 	if (y == 0)
-		jul->f.y = jul->cadremaxy * jul->zoom + jul->arrow.y;
+		*fy = jul->cadremaxy * jul->zoom + jul->arrow.y;
 	else
-		jul->f.y = jul->cadreminy * jul->zoom + jul->arrow.y + y
+		*fy = jul->cadreminy * jul->zoom + jul->arrow.y + y
 			* (jul->cadremaxy * jul->zoom + jul->arrow.y - (jul->cadreminy
 					* jul->zoom + jul->arrow.y)) / (HEIGHT - 1);
 }
@@ -46,15 +46,16 @@ static void	coordinate(double x, double y, t_fractal *jul)
 static void	draw_fractal(int x, int y, t_fractal *jul)
 {
 	int	it;
+	double fx, fy;
 
 	it = 0;
-	coordinate(x, y, jul);
+	coordinate(x, y, jul, &fx, &fy);
 	if (jul->name == JULIA)
-		it = julia(jul);
+		it = julia(jul, fx, fy);
 	else if (jul->name == MANDELBROT)
-		it = mandelbrot(jul);
+		it = mandelbrot(jul, fx, fy);
 	else if (jul->name == BURNINGSHIP)
-		it = burningship(jul);
+		it = burningship(jul, fx, fy);
 	if (it == jul->it)
 		mlx_put_pixel(jul->img, x, y, 0x000000FF);
 	else if (it == jul->it - 1)
@@ -63,19 +64,19 @@ static void	draw_fractal(int x, int y, t_fractal *jul)
 		mlx_put_pixel(jul->img, x, y, color(it, jul));
 }
 
-void	fractal(t_fractal *jul)
+void	*fractal(void *data)
 {
+	t_thread *dat = data;
 	int	x;
-	int	y;
+	int y = dat->miny;
 
-	x = 0;
-	y = 1;
-	while (y < HEIGHT)
+	x = dat->minx;
+	while (y < dat->maxy)
 	{
-		x = 0;
-		while (x < WIDTH)
+		x = dat->minx;
+		while (x < dat->maxx)
 		{
-			draw_fractal(x, y, jul);
+			draw_fractal(x, y, dat->jul);
 			x++;
 		}
 		y++;

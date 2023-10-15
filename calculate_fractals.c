@@ -12,21 +12,21 @@
 
 #include "fractol.h"
 
-int	burningship(t_fractal *jul)
+int	burningship(t_fractal *jul, double fx, double fy)
 {
 	int		i;
 	double	tx;
 	double	ty;
 
 	i = 0;
-	jul->z.x = 0;
-	jul->z.y = 0;
-	while (i < jul->it && jul->z.x * jul->z.x + jul->z.y * jul->z.y < 4)
+	double zx = 0;
+	double zy = 0;
+	while (i < jul->it && zx * zx + zy * zy < 4)
 	{
-		tx = jul->z.x * jul->z.x - jul->z.y * jul->z.y + jul->f.x;
-		ty = fabs(2 * jul->z.x * jul->z.y) + jul->f.y;
-		jul->z.x = tx;
-		jul->z.y = ty;
+		tx = zx * zx - zy * zy + fx;
+		ty = fabs(2 * zx * zy) + fy;
+		zx = tx;
+		zy = ty;
 		i++;
 	}
 	if (i == jul->it + 1)
@@ -34,44 +34,44 @@ int	burningship(t_fractal *jul)
 	return (i);
 }
 
-int	julia(t_fractal *jul)
+int	julia(t_fractal *jul, double fx, double fy)
 {
 	int		i;
 	double	t;
 
 	i = 0;
-	t = jul->f.x;
+	t = fx;
 	while (i <= jul->it)
 	{
-		t = jul->f.x;
-		jul->f.x = (jul->f.x * jul->f.x) - (jul->f.y * jul->f.y) + jul->c.x;
-		jul->f.y = (2 * t * jul->f.y) + jul->c.y;
-		if ((jul->f.x * jul->f.x) + (jul->f.y * jul->f.y) > 4)
+		t = fx;
+		fx = (fx * fx) - (fy * fy) + jul->c.x;
+		fy = (2 * t * fy) + jul->c.y;
+		if ((fx * fx) + (fy * fy) > 4)
 			break ;
 		i++;
 	}
 	if (i == jul->it + 1)
 		i--;
-	jul->z.x = jul->f.x;
-	jul->z.y = jul->f.y;
+	//jul->z.x = jul->f.x;
+	//jul->z.y = jul->f.y;
 	return (i);
 }
 
-int	mandelbrot(t_fractal *jul)
+int	mandelbrot(t_fractal *jul, double fx, double fy)
 {
 	int		i;
 	double	tx;
 	double	ty;
 
-	jul->z.x = 0;
-	jul->z.y = 0;
+	double zx = 0;
+	double zy = 0;
 	i = 0;
-	while (i < jul->it && jul->z.x * jul->z.x + jul->z.y * jul->z.y < 4)
+	while (i < jul->it && zx * zx + zy * zy < 4)
 	{
-		tx = jul->z.x * jul->z.x - jul->z.y * jul->z.y + jul->f.x;
-		ty = 2 * jul->z.x * jul->z.y + jul->f.y;
-		jul->z.x = tx;
-		jul->z.y = ty;
+		tx = zx * zx - zy * zy + fx;
+		ty = 2 * zx * zy + fy;
+		zx = tx;
+		zy = ty;
 		i++;
 	}
 	if (i == jul->it + 1)

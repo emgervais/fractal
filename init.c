@@ -95,6 +95,49 @@ int	init_mlx(t_fractal *jul)
 	return (1);
 }
 
+void create_thread(t_fractal *jul)
+{
+	int i = 0;
+	while(i < NUM)
+	{
+		if(i % 4 == 0 || i == 0)
+		{
+			jul->t[i].minx = 0;
+			if(i == 0)
+				jul->t[i].miny = 0;
+			else
+				jul->t[i].miny = jul->t[i - 1].miny + 270;
+		}
+		else
+		{
+			jul->t[i].miny = jul->t[i - 1].miny;
+			jul->t[i].minx = jul->t[i - 1].maxx;
+		}
+		jul->t[i].maxx = jul->t[i].minx + 270;
+		jul->t[i].maxy = jul->t[i].miny + 270;
+		jul->t[i].jul = jul;
+		i++;
+	}
+}
+
+void render(t_fractal *jul)
+{
+	int i = 0;
+	while(i < NUM)
+	{
+		pthread_create(&jul->t[i].t1, NULL, &fractal, &jul->t[i]);
+		i++;
+	}
+}
+void wait_thread(t_fractal *jul)
+{
+	int i = 0;
+
+	while(i < NUM)
+	{
+		pthread_join(jul->t[i++].t1, NULL);
+	}
+}
 int	create_fractal(t_fractal *jul, int argc, char **argv)
 {
 	int	check;
@@ -110,7 +153,9 @@ Mandelbrot, Burningship.\n");
 	check = init_mlx(jul);
 	if (check == ERROR)
 		return (ERROR);
-	fractal(jul);
+	create_thread(jul);
+	render(jul);
+	wait_thread(jul);
 	check = mlx_image_to_window(jul->mlx, jul->img, 0, 0);
 	if (check == ERROR)
 	{

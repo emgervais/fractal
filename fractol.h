@@ -17,10 +17,24 @@
 # include <math.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <pthread.h>
 
-# define HEIGHT 1400
-# define WIDTH 1400
+# define HEIGHT 1080
+# define WIDTH 1080
 # define ERROR -1
+# define NUM 16
+
+typedef struct s_fractal;
+
+typedef struct s_thread
+{
+	struct s_fractal *jul;
+	pthread_t *t1;
+	int maxx;
+	int maxy;
+	int minx;
+	int miny;
+} t_thread;
 
 enum				e_fractal
 {
@@ -46,6 +60,7 @@ typedef struct s_color
 typedef struct s_fractal
 {
 	enum e_fractal	name;
+	struct s_thread 		t[NUM];
 	mlx_image_t		*img;
 	mlx_image_t		*men;
 	mlx_t			*mlx;
@@ -69,10 +84,10 @@ typedef struct s_fractal
 //int		mousex;
 //int		mousey;
 
-void				fractal(t_fractal *jul);
-int					burningship(t_fractal *jul);
-int					julia(t_fractal *jul);
-int					mandelbrot(t_fractal *jul);
+void	*fractal(void *data);
+int					burningship(t_fractal *jul, double fx, double fy);
+int	julia(t_fractal *jul, double fx, double fy);
+int					mandelbrot(t_fractal *jul, double fx, double fy);
 void				loop(t_fractal *jul);
 void				paraminit(t_fractal *jul);
 void				initjul(t_fractal *jul, char **name, int argc);
@@ -84,5 +99,7 @@ int					color(int i, t_fractal *jul);
 void				xhook(void *param);
 void				ft_putstr(char *str);
 int					ft_strlen(char *str);
+void render(t_fractal *jul);
+void wait_thread(t_fractal *jul);
 
 #endif
