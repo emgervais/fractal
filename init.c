@@ -128,6 +128,7 @@ void render(t_fractal *jul)
 		pthread_create(&jul->t[i].t1, NULL, &fractal, &jul->t[i]);
 		i++;
 	}
+	wait_thread(jul);
 }
 void wait_thread(t_fractal *jul)
 {

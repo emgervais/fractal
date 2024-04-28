@@ -67,10 +67,9 @@ static void	draw_fractal(int x, int y, t_fractal *jul)
 void	*fractal(void *data)
 {
 	t_thread *dat = data;
-	int	x;
+	int	x = dat->minx;
 	int y = dat->miny;
 
-	x = dat->minx;
 	while (y < dat->maxy)
 	{
 		x = dat->minx;
@@ -81,4 +80,5 @@ void	*fractal(void *data)
 		}
 		y++;
 	}
+	return NULL;
 }

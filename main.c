@@ -59,7 +59,7 @@ int	main(int argc, char **argv)
 	paraminit(jul);
 	check = create_fractal(jul, argc, argv);
 	if (check == ERROR)
-		return (ERROR);
+		return (free(jul), ERROR);
 	loop(jul);
 	mlx_loop(jul->mlx);
 	mlx_terminate(jul->mlx);

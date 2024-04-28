@@ -18,18 +18,17 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <pthread.h>
+# include <stdio.h>
 
 # define HEIGHT 1080
 # define WIDTH 1080
 # define ERROR -1
 # define NUM 16
 
-typedef struct s_fractal;
-
 typedef struct s_thread
 {
 	struct s_fractal *jul;
-	pthread_t *t1;
+	pthread_t t1;
 	int maxx;
 	int maxy;
 	int minx;

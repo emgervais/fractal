@@ -52,8 +52,6 @@ int	julia(t_fractal *jul, double fx, double fy)
 	}
 	if (i == jul->it + 1)
 		i--;
-	//jul->z.x = jul->f.x;
-	//jul->z.y = jul->f.y;
 	return (i);
 }
 

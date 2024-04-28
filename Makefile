@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 NAME	:= fractol
-CFLAGS	:= -Wextra -Wall -Werror -Wunreachable-code -Wno-unused-parameter -Wno-unused-result -O3 -fsanitize=address -g
+CFLAGS	:= -Wunreachable-code -Wno-unused-parameter -Wno-unused-result -O3 -fsanitize=address -g
 SRCS	:= calculate_fractals.c hooks.c init.c fractals.c main.c color.c
 OBJS	:= ${SRCS:.c=.o}
 LIBMLX	:= ./MLX42/
